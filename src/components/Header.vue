@@ -39,11 +39,12 @@
 			</el-input>
 			<!-- 设置IP地址 -->
 		</div>
-		<div class="AcountView">
+        <button @click="test">test</button>
+		<div id="AcountView">
 			<!-- 店铺信息 -->
-			<div class="AcountName msg">{{ Acount.name }}</div>
+			<div class="AcountName msg" id="">{{ Acount.name }}</div>
 			<div class="Phone msg">{{ Acount.telephone1 }}</div>
-			<div class="Addr msg"></div>
+            <div v-if="Acount.telephone2 " class="Phone msg">{{ Acount.telephone2 }}</div>
 		</div>
 	</head>
 </template>
@@ -51,17 +52,28 @@
 <script setup>
 import { ref } from 'vue'
 import axios from 'axios'
-const input = ref('localhost')
-const Acount = ref({name:"店名",telephone1:"888-888-8888"})
-const servertest = () => {
-	axios.get('http://localhost:3030/mysqlcon').then((d) => {
-		console.log(d.data[0])
-        Acount.value = d.data[0]
-        console.log(Acount.value);
-	})
-	// 连接数据库 获取店铺信息 
-    
+import {acountMsg} from '../Api/api'
+const emite = defineEmits(['ConnetMysql'])
+let conIP = 'localhost'
+const input = ref('192.168.252.172')//ip输入栏初始化
+const Acount = ref({name:"",telephone1:"",telephone2:""})//店名格式初始化
+axios.defaults.timeout = 60000;
+const test = ()=>{
+    axios.put('http://'+conIP+':3030/addData',{'fun':'insert into device (name,manufacturer_name,mode_name,ip_address,comm_type,port,additional_settings,enable_pin_pad_tip,enable_pin_pad_signature) values("s300_test","PAX","S300","1.2.3.4")'}).then((d)=>{
+        console.log(d.data);
+    })
 }
+const setAcount = async ()=>{
+    Acount.value = await acountMsg(conIP)
+    // 连接获取信息
+    // console.log(acountMsg(conIP));
+    // console.log(Acount.value);
+    //
+    // let AcountNav = document.getElementById('AcountView')
+    //     AcountNav.style.marginLeft = 50+'%'
+    emite('ConnetMysql')
+}
+//连接 
 const connetBtn = () => {
 	// console.log(input.value);
 	let alertError = () => {
@@ -94,11 +106,15 @@ const connetBtn = () => {
 			}
 		}
 	} else {
-		servertest()
+        localStorage.setItem(ip,conIP)
+		setAcount()
 		// 下一步
 	}
 	if (conNum == 4) {
-		servertest()
+        conIP = IpAddr
+        localStorage.setItem('ip',conIP)
+        console.log(conIP);
+		setAcount()
 		// 全对 下一步
 	}
 }
@@ -138,10 +154,17 @@ const connetBtn = () => {
 	box-shadow: none;
 }
 
-.AcountView{
+#AcountView{
     height: 70px;
-    width: 100%;
-    margin-left: 30px;
+    width: 50%;
+    margin-left: 100%;
+    float: right;
+    background: rgb(49,130,184);
+    box-shadow: -3px -3px 5px rgba(0, 0, 0, 0.5);
+    position: fixed;
+    top: 4px;
+    transition: all 1000ms;
+    border-radius: 4px;
 }
 .msg{
     float: left;
@@ -149,5 +172,9 @@ const connetBtn = () => {
     width: 140px;
     margin-left: 30px;
     padding-top: 10px;
+    text-shadow: 3px 3px 3px rgba(0, 0, 0, 0.3);
+    font-weight: bold;
+    font-size: larger ;
+    color: #fff;
 }
 </style>
