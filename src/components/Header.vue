@@ -52,17 +52,18 @@
 <script setup>
 import { ref } from 'vue'
 import axios from 'axios'
-import {acountMsg} from '../Api/api'
+import {acountMsg,getOs} from '../Api/api'
 const emite = defineEmits(['ConnetMysql'])
 let conIP = 'localhost'
 const input = ref('192.168.252.172')//ip输入栏初始化
 const Acount = ref({name:"",telephone1:"",telephone2:""})//店名格式初始化
 axios.defaults.timeout = 60000;
+//------------测试-------------
 const test = ()=>{
-    axios.put('http://'+conIP+':3030/addData',{'fun':'insert into device (name,manufacturer_name,mode_name,ip_address,comm_type,port,additional_settings,enable_pin_pad_tip,enable_pin_pad_signature) values("s300_test","PAX","S300","1.2.3.4")'}).then((d)=>{
-        console.log(d.data);
-    })
+    getOs(conIP)
 }
+//-------------------------
+//-------------店名信息获取--------------
 const setAcount = async ()=>{
     Acount.value = await acountMsg(conIP)
     // 连接获取信息
@@ -74,6 +75,8 @@ const setAcount = async ()=>{
     emite('ConnetMysql')
 }
 //连接 
+//------------------------------
+//-------------ip审核----------------
 const connetBtn = () => {
 	// console.log(input.value);
 	let alertError = () => {
@@ -118,6 +121,7 @@ const connetBtn = () => {
 		// 全对 下一步
 	}
 }
+//----------------------------------
 </script>
 
 <style scoped>
@@ -161,7 +165,7 @@ const connetBtn = () => {
     float: right;
     background: rgb(49,130,184);
     box-shadow: -3px -3px 5px rgba(0, 0, 0, 0.5);
-    position: fixed;
+    position: absolute;
     top: 4px;
     transition: all 1000ms;
     border-radius: 4px;
