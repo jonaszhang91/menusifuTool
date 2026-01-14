@@ -364,6 +364,7 @@ echo "\033[33m +--------------------------------------------------------------+\
 sudo rm -f /home/menu/menusifu_magic_update.tar.gz
 sudo rm -f /home/menu/kpos.war
 cd /home/menu 
+sudo rm -rf /home/menu/1.8.0.30.16.6-fast-0-PIT-12443
 wget --no-check-certificate 'https://docs.google.com/uc?export=download&id=1bUuONlceqolnOFhAY14bzfky-Czj0NKy' -O /home/menu/pit 
 unzip /home/menu/pit 
 sudo cp -rf /home/menu/1.8.0.30.16.6-fast-0-PIT-12443/kpos/* /opt/apache-tomcat-7.0.93/webapps/kpos/ 
